@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="game_background">#FDF4A6</color>
+    <color name="game_background_05">#FFF06B</color>
+    <color name="game_background_10">#F6C78D</color>
+    <color name="game_background_15">#F4B66A</color>
+    <color name="game_background_20">#EFB2F9</color>
+    <color name="game_background_25">#E78EF9</color>
+    <color name="game_background_30">#C4B0F8</color>
+    <color name="game_background_35">#A789F6</color>
+    <color name="game_background_40">#8A62F2</color>
+
+    <color name="score">#3C000000</color>
+</resources>

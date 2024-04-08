@@ -1,3 +1,4 @@
+@@ -1,33 +1,15 @@
 # Gradle files
 .gradle/
 build/
@@ -15,7 +16,6 @@ captures/
 *.apk
 output.json
 
-# IntelliJ
 *.iml
 .idea/
 misc.xml
@@ -31,3 +31,16 @@ google-services.json
 
 # Android Profiling
 *.hprof
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
