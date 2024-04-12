@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +35,8 @@ public class PongView extends View {
     PongListener _listener;
 
     int _score;
+
+    BallDesign _ballDesign;
 
 
     public PongView(Context context) {
@@ -66,6 +69,7 @@ public class PongView extends View {
         _balls = new Vector<>();
         _listener = null;
         _score = 0;
+        _ballDesign = DataManager.getCurrentBallDesign(context);
 
         _ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         _ballPaint.setStyle(Paint.Style.FILL);
@@ -87,6 +91,9 @@ public class PongView extends View {
     private void initData() {
 
         _balls.clear();
+        _score = 0;
+        _ballDesign = DataManager.getCurrentBallDesign(this.getContext());
+
         _bar = new Bar(_viewWidth / 2f, _viewHeight - convertDpToPixel(24), _viewWidth / 4f, convertDpToPixel(36));
 
         int angle = 180 + 45 + 15 - 15 + (int) (_random.nextFloat() * 15);
@@ -102,6 +109,8 @@ public class PongView extends View {
                 convertDpToPixel(700),
                 0)
         );
+
+        _timer.getDeltaTime();
     }
 
     private void updatePhysics() {
@@ -216,18 +225,18 @@ public class PongView extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (_bar != null) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                _bar.x = event.getX();
+            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                _bar.x = event.getX();
+            }
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            _bar.x = event.getX();
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            _bar.x = event.getX();
+            if (_bar.x - _bar.width / 2f < 0)
+                _bar.x = _bar.width / 2f;
+            else if (_bar.x + _bar.width / 2f > _viewWidth)
+                _bar.x = _viewWidth - _bar.width / 2f;
         }
-
-        if (_bar.x - _bar.width / 2f < 0)
-            _bar.x = _bar.width / 2f;
-        else if (_bar.x + _bar.width / 2f > _viewWidth)
-            _bar.x = _viewWidth - _bar.width / 2f;
-
         return true;
     }
 
@@ -239,35 +248,45 @@ public class PongView extends View {
         int width = getWidth();
 
         if (height != _viewHeight || width != _viewWidth) {
+            boolean isZero = _viewHeight == 0;
             _viewHeight = getHeight();
             _viewWidth = getWidth();
-            initData();
+            if (!isZero)
+                initData();
         }
-
-        if (_balls.isEmpty())
-            initData();
 
         updatePhysics();
 
         for (Ball ball : _balls) {
             canvas.drawCircle(ball.x, ball.y, ball.radius, _ballPaint);
 
-            final String EMOJI = "❤\uFE0F";//"\uD83C\uDF0D"; // the Earth Globe (Europe, Africa) emoji - should never be transparent in the center
-            float ascent = Math.abs(_emojiPaint.ascent());
-            float descent = Math.abs(_emojiPaint.descent());
-            float halfHeight = (ascent + descent) / 2.0f;
-            canvas.rotate(ball.currentRotation, ball.x, ball.y);
-            canvas.drawText(EMOJI, ball.x, ball.y + halfHeight - descent, _emojiPaint);
-            canvas.rotate(-ball.currentRotation, ball.x, ball.y);
+            if (_ballDesign.emoji != null) {
+                float ascent = Math.abs(_emojiPaint.ascent());
+                float descent = Math.abs(_emojiPaint.descent());
+                float halfHeight = (ascent + descent) / 2.0f;
+                canvas.rotate(ball.currentRotation, ball.x, ball.y);
+                canvas.drawText(_ballDesign.emoji, ball.x, ball.y + halfHeight - descent, _emojiPaint);
+                canvas.rotate(-ball.currentRotation, ball.x, ball.y);
+            } else {
+                canvas.rotate(ball.currentRotation, ball.x, ball.y);
+                canvas.drawBitmap(_ballDesign.bitmap,
+                        new Rect(0, 0, _ballDesign.bitmap.getWidth(), _ballDesign.bitmap.getHeight()),
+                        new Rect((int) ball.x - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.x + (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y + (int) (ball.radius * _ballDesign.radiusMultiplier)), _emojiPaint);
+                canvas.rotate(-ball.currentRotation, ball.x, ball.y);
+            }
+
+
         }
 
-        _barPaint.setStrokeWidth(_bar.height);
-        _barPaint.setColor(Color.DKGRAY);
-        canvas.drawLine(_bar.x - _bar.width / 2f + _bar.height / 4f, _bar.y, _bar.x + _bar.width / 2f - _bar.height / 4f, _bar.y, _barPaint);
+        if (_bar != null) {
+            _barPaint.setStrokeWidth(_bar.height);
+            _barPaint.setColor(Color.DKGRAY);
+            canvas.drawLine(_bar.x - _bar.width / 2f + _bar.height / 4f, _bar.y, _bar.x + _bar.width / 2f - _bar.height / 4f, _bar.y, _barPaint);
 
-        _barPaint.setStrokeWidth(4);
-        _barPaint.setColor(Color.RED);
-        canvas.drawLine(_bar.x - _bar.width / 2f, _bar.y, _bar.x + _bar.width / 2f, _bar.y, _barPaint);
+            _barPaint.setStrokeWidth(4);
+            _barPaint.setColor(Color.RED);
+            canvas.drawLine(_bar.x - _bar.width / 2f, _bar.y, _bar.x + _bar.width / 2f, _bar.y, _barPaint);
+        }
 
         if (!_balls.isEmpty())
             invalidate();
@@ -307,9 +326,7 @@ public class PongView extends View {
     }
 
     public void start() {
-        _balls.clear();
-        _score = 0;
-
+        this.initData();
         this.informScoreChanged();
         invalidate();
     }
@@ -359,7 +376,7 @@ public class PongView extends View {
             this.dy = (float) Math.sin(angle) * _dpPerSecond;
 
             this.speedFactor = 1f;
-            this.rotationPerSecond = 360;
+            this.rotationPerSecond = 360 - 90;
             this.currentRotation = 0f;
             this.lost = false;
         }

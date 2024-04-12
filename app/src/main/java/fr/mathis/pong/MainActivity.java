@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -15,13 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     PongView _pongView;
     TextView _score;
     Button _replay;
-    FloatingActionButton _setting;
+    ImageView _ivSettings;
     CardView _cvSettings;
     RecyclerView _ballRecyclerView;
     int currentBackgroundColor;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _score = findViewById(R.id.score);
         _pongView = findViewById(R.id.pongGame);
         _replay = findViewById(R.id.btnReplay);
-        _setting = findViewById(R.id.btnSettings);
+        _ivSettings = findViewById(R.id.ivSettings);
         _cvSettings = findViewById(R.id.cvSettings);
         _ballRecyclerView = findViewById(R.id.rvBalls);
 
@@ -69,12 +67,11 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             this.onReplayClicked();
         });
 
-        _setting.setOnClickListener(v -> {
+        _ivSettings.setOnClickListener(v -> {
             this.onSettingClicked();
         });
 
         _pongView.setListener(this);
-        _pongView.start();
 
         _ballRecyclerView.setAdapter(new BallAdapter());
         _ballRecyclerView.setNestedScrollingEnabled(true);
@@ -89,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
     @Override
     public void onLost() {
+        _replay.setText(R.string.replay);
         _replay.setVisibility(View.VISIBLE);
-        _setting.setVisibility(View.VISIBLE);
+        _ivSettings.setVisibility(View.VISIBLE);
     }
 
     private void updateBackgroundColor(int score) {
@@ -108,22 +106,31 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
     private void onReplayClicked() {
         _replay.setVisibility(View.GONE);
-        _setting.setVisibility(View.GONE);
+        _ivSettings.setVisibility(View.GONE);
         _cvSettings.setVisibility(View.GONE);
         _pongView.start();
     }
 
     private void onSettingClicked() {
         _cvSettings.setVisibility(View.VISIBLE);
-        _setting.setVisibility(View.GONE);
+        _ivSettings.setVisibility(View.GONE);
+    }
+
+    public void onBallSelected(BallDesign design) {
+        DataManager.SaveInt(this.getApplicationContext(), DataManager.KEY_SELECTEDBALL, design.id);
+        this.onReplayClicked();
     }
 
     class BallVH extends RecyclerView.ViewHolder {
-        TextView tv;
+        TextView tvEmoji;
+        ImageView ivDesign;
+        View clickableArea;
 
         public BallVH(View itemView) {
             super(itemView);
-            tv = itemView.findViewById(R.id.textView);
+            tvEmoji = itemView.findViewById(R.id.tvEmoji);
+            ivDesign = itemView.findViewById(R.id.ivDesign);
+            clickableArea = itemView;
         }
     }
 
@@ -131,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         ArrayList<BallDesign> _designs;
 
         public BallAdapter() {
-            _designs = DataManager.getAllBallsDesign();
+            _designs = DataManager.getAllBallsDesign(MainActivity.this.getBaseContext());
         }
 
         @NonNull
@@ -142,7 +149,23 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
         @Override
         public void onBindViewHolder(@NonNull BallVH holder, int position) {
-            holder.tv.setText("Icone " + position);
+
+            final BallDesign currentDesign = _designs.get(position);
+
+            if (currentDesign.emoji != null) {
+                holder.tvEmoji.setText(currentDesign.emoji);
+                holder.tvEmoji.setVisibility(View.VISIBLE);
+                holder.ivDesign.setVisibility(View.GONE);
+            } else {
+                holder.ivDesign.setImageResource(currentDesign.drawable);
+                holder.tvEmoji.setVisibility(View.GONE);
+                holder.ivDesign.setVisibility(View.VISIBLE);
+            }
+
+            holder.clickableArea.setOnClickListener(v -> {
+                MainActivity.this.onBallSelected(currentDesign);
+            });
+
         }
 
         @Override

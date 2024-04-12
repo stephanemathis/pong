@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pong</string>
+    <string name="play">Jouer</string>
     <string name="replay">Rejouer</string>
 </resources>
