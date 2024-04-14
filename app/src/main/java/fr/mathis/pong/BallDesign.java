@@ -3,6 +3,7 @@ package fr.mathis.pong;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -10,6 +11,7 @@ public class BallDesign {
 
     public final int id;
     public final int drawable;
+    public final Rect bitmapRect;
     public final Bitmap bitmap;
     public final float radiusMultiplier;
     public final String emoji;
@@ -22,8 +24,13 @@ public class BallDesign {
         this.emoji = emoji;
         this.minScore = minScore;
         this.radiusMultiplier = radiusMultiplier;
-
-        this.bitmap = BitmapFactory.decodeResource(resources, drawable);
+        if (this.drawable > 0) {
+            this.bitmap = BitmapFactory.decodeResource(resources, drawable);
+            this.bitmapRect = new Rect(0, 0, this.bitmap.getWidth(), this.bitmap.getHeight());
+        } else {
+            this.bitmap = null;
+            this.bitmapRect = null;
+        }
     }
 }
 

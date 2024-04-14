@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +40,7 @@ public class PongView extends View {
     int _score;
 
     BallDesign _ballDesign;
+    Rect _ballRect;
 
 
     public PongView(Context context) {
@@ -70,6 +74,7 @@ public class PongView extends View {
         _listener = null;
         _score = 0;
         _ballDesign = DataManager.getCurrentBallDesign(context);
+        _ballRect = new Rect(0, 0, 0, 0);
 
         _ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         _ballPaint.setStyle(Paint.Style.FILL);
@@ -98,17 +103,9 @@ public class PongView extends View {
 
         int angle = 180 + 45 + 15 - 15 + (int) (_random.nextFloat() * 15);
 
-        if (_random.nextBoolean())
-            angle += 90;
+        if (_random.nextBoolean()) angle += 90;
 
-        _balls.add(new Ball(
-                _viewWidth / 2f,
-                _viewHeight / 2f,
-                convertDpToPixel(24),
-                angle,
-                convertDpToPixel(700),
-                0)
-        );
+        _balls.add(new Ball(_viewWidth / 2f, _viewHeight / 2f, convertDpToPixel(24), angle, convertDpToPixel(700), 0));
 
         _timer.getDeltaTime();
     }
@@ -116,7 +113,11 @@ public class PongView extends View {
     private void updatePhysics() {
         float deltaTime = _timer.getDeltaTime();
 
-        for (Ball ball : _balls) {
+        for (int i = 0; i < _balls.size(); i++) {
+
+            if (_balls.size() < i)
+                continue;
+            Ball ball = _balls.get(i);
 
             ball.currentRotation += ball.rotationPerSecond * deltaTime;
 
@@ -126,19 +127,15 @@ public class PongView extends View {
                 this.onTouchBar();
             } else {
                 // Sous la barre
-                if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTime > _bar.y - _bar.height / 2f) {
+                if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTime > _bar.y - _bar.height / 2f && ball.lost == false) {
                     // lost
                     ball.lost = true;
                     this.onTouchBottom();
                 }
+
                 // Bas de l'écran
                 if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTime > _viewHeight) {
                     ball.dy = -ball.dy;
-
-                    ball.dy = 0;
-                    ball.dx = 0;
-                    ball.y = _viewHeight - ball.radius;
-                    ball.rotationPerSecond = 0;
                 }
             }
 
@@ -160,8 +157,7 @@ public class PongView extends View {
 
     private boolean intersects(float deltaTime, Ball circle, Bar rect) {
 
-        if (circle.dy < 0)
-            return false;
+        if (circle.dy < 0) return false;
 
         float xMiddle = circle.x + circle.dx * circle.speedFactor * deltaTime;
         float yMiddle = circle.y + circle.radius + circle.dy * circle.speedFactor * deltaTime;
@@ -196,30 +192,48 @@ public class PongView extends View {
     }
 
     private void onTouchBar() {
-        this._score += 1;
+        this._score += 4;
         this.informScoreChanged();
+
+        this.vibrate();
 
         for (Ball point : _balls) {
             point.speedFactor = this.properSpeed(point);
+        }
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(50);
         }
     }
 
     private void onTouchBottom() {
-        this._score -= 5;
-        if (this._score < 0)
-            this._score = 0;
-        this.informScoreChanged();
-
         for (Ball point : _balls) {
-            point.speedFactor = this.properSpeed(point);
+            point.speedFactor = 1f;//this.properSpeed(point);
         }
 
-        if (_listener != null)
-            _listener.onLost();
+        Ball firstBall = _balls.get(0);
+
+        for (int i = 0; i < this._score - 1; i++) {
+            int angle = 180 + 20 + (int) (_random.nextFloat() * 160);
+
+            Ball newBall = new Ball(firstBall, angle);
+            newBall.rotationPerSecond = 0;
+            _balls.add(newBall);
+        }
+
+
+        if (_listener != null) _listener.onLost();
     }
 
     private float properSpeed(Ball _ball) {
-        return 1f + (this._score / 10f) * 0.2f;
+        return Math.max(1f, (float) Math.sqrt((double) this._score / 7f) + 0.3f);
+        //return 1f + (this._score / 10f) * 0.2f;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -232,10 +246,8 @@ public class PongView extends View {
                 _bar.x = event.getX();
             }
 
-            if (_bar.x - _bar.width / 2f < 0)
-                _bar.x = _bar.width / 2f;
-            else if (_bar.x + _bar.width / 2f > _viewWidth)
-                _bar.x = _viewWidth - _bar.width / 2f;
+            if (_bar.x - _bar.width / 2f < 0) _bar.x = _bar.width / 2f;
+            else if (_bar.x + _bar.width / 2f > _viewWidth) _bar.x = _viewWidth - _bar.width / 2f;
         }
         return true;
     }
@@ -251,8 +263,7 @@ public class PongView extends View {
             boolean isZero = _viewHeight == 0;
             _viewHeight = getHeight();
             _viewWidth = getWidth();
-            if (!isZero)
-                initData();
+            if (!isZero) initData();
         }
 
         updatePhysics();
@@ -269,27 +280,23 @@ public class PongView extends View {
                 canvas.rotate(-ball.currentRotation, ball.x, ball.y);
             } else {
                 canvas.rotate(ball.currentRotation, ball.x, ball.y);
-                canvas.drawBitmap(_ballDesign.bitmap,
-                        new Rect(0, 0, _ballDesign.bitmap.getWidth(), _ballDesign.bitmap.getHeight()),
-                        new Rect((int) ball.x - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.x + (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y + (int) (ball.radius * _ballDesign.radiusMultiplier)), _emojiPaint);
+                this._ballRect.set((int) ball.x - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y - (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.x + (int) (ball.radius * _ballDesign.radiusMultiplier), (int) ball.y + (int) (ball.radius * _ballDesign.radiusMultiplier));
+                canvas.drawBitmap(_ballDesign.bitmap, _ballDesign.bitmapRect, this._ballRect, _emojiPaint);
                 canvas.rotate(-ball.currentRotation, ball.x, ball.y);
             }
-
-
         }
 
         if (_bar != null) {
             _barPaint.setStrokeWidth(_bar.height);
             _barPaint.setColor(Color.DKGRAY);
-            canvas.drawLine(_bar.x - _bar.width / 2f + _bar.height / 4f, _bar.y, _bar.x + _bar.width / 2f - _bar.height / 4f, _bar.y, _barPaint);
+            canvas.drawLine(_bar.x - _bar.width / 2f + _bar.height / 2f, _bar.y, _bar.x + _bar.width / 2f - _bar.height / 2f, _bar.y, _barPaint);
 
             _barPaint.setStrokeWidth(4);
             _barPaint.setColor(Color.RED);
             canvas.drawLine(_bar.x - _bar.width / 2f, _bar.y, _bar.x + _bar.width / 2f, _bar.y, _barPaint);
         }
 
-        if (!_balls.isEmpty())
-            invalidate();
+        if (!_balls.isEmpty()) invalidate();
     }
 
     @Override
@@ -336,8 +343,7 @@ public class PongView extends View {
     }
 
     private void informScoreChanged() {
-        if (this._listener != null)
-            this._listener.onScoreChanged(this._score);
+        if (this._listener != null) this._listener.onScoreChanged(this._score);
     }
 
     class Bar {
@@ -365,6 +371,7 @@ public class PongView extends View {
         public int rotationPerSecond;
         public float currentRotation;
         public boolean lost;
+        public float dpPerSecond;
 
         public Ball(float _x, float _y, float _radius, int _direction, float _dpPerSecond, int _generatedIndex) {
             this.x = _x;
@@ -376,9 +383,26 @@ public class PongView extends View {
             this.dy = (float) Math.sin(angle) * _dpPerSecond;
 
             this.speedFactor = 1f;
-            this.rotationPerSecond = 360 - 90;
+            this.rotationPerSecond = (_random.nextBoolean() ? 1 : -1) * (360 - 90);
             this.currentRotation = 0f;
             this.lost = false;
+            this.dpPerSecond = _dpPerSecond;
+        }
+
+        public Ball(Ball _source, int _direction) {
+            this.x = _source.x;
+            this.y = _source.y;
+            this.radius = _source.radius;
+            double angle = Math.toRadians(_direction);
+
+            this.dx = (float) Math.cos(angle) * _source.dpPerSecond;
+            this.dy = (float) Math.sin(angle) * _source.dpPerSecond;
+
+            this.speedFactor = _source.speedFactor;
+            this.rotationPerSecond = _source.rotationPerSecond;
+            this.currentRotation = _source.currentRotation;
+            this.lost = _source.lost;
+            this.dpPerSecond = _source.dpPerSecond;
         }
     }
 
@@ -390,8 +414,7 @@ public class PongView extends View {
         }
 
         public float getDeltaTime() {
-            if (previousTime == -1L)
-                previousTime = System.nanoTime();
+            if (previousTime == -1L) previousTime = System.nanoTime();
 
             long currentTime = System.nanoTime();
             long dt = (currentTime - previousTime) / 1000000;

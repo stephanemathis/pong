@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -77,6 +78,25 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _ballRecyclerView.setNestedScrollingEnabled(true);
     }
 
+    boolean paused = false;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.paused = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (this.paused) {
+            this.paused = false;
+            this.onReplayClicked();
+        }
+    }
+
     @Override
     public void onScoreChanged(int score) {
         if (this._score != null) this._score.setText("" + score);
@@ -112,8 +132,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     }
 
     private void onSettingClicked() {
-        _cvSettings.setVisibility(View.VISIBLE);
-        _ivSettings.setVisibility(View.GONE);
+        _cvSettings.setVisibility(_cvSettings.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
     public void onBallSelected(BallDesign design) {
@@ -157,7 +176,14 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
                 holder.tvEmoji.setVisibility(View.VISIBLE);
                 holder.ivDesign.setVisibility(View.GONE);
             } else {
-                holder.ivDesign.setImageResource(currentDesign.drawable);
+                Glide.with(MainActivity.this)
+                        .load(currentDesign.drawable)
+                        .override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96))
+                        .placeholder(R.drawable.baseline_accessibility_24)
+                        .into(holder.ivDesign);
+
+
+                //holder.ivDesign.setImageResource(currentDesign.drawable);
                 holder.tvEmoji.setVisibility(View.GONE);
                 holder.ivDesign.setVisibility(View.VISIBLE);
             }
