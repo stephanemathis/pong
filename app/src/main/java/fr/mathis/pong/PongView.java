@@ -244,7 +244,7 @@ public class PongView extends View {
         }
 
 
-        if (_listener != null) _listener.onLost();
+        if (_listener != null) _listener.onLost(_ballDesign.id, this._score);
     }
 
     private float properSpeed(Ball _ball) {
@@ -456,7 +456,7 @@ public class PongView extends View {
     public interface PongListener {
         void onScoreChanged(int score);
 
-        void onLost();
+        void onLost(int ballId, int finalScore);
     }
 /*
     @ColorInt

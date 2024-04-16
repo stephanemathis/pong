@@ -2,7 +2,12 @@ package fr.mathis.pong;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 public class MainActivity extends AppCompatActivity implements PongView.PongListener {
 
@@ -34,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     ImageView _ivSettings;
     CardView _cvSettings;
     RecyclerView _ballRecyclerView;
+    BallAdapter _adapter;
     int currentBackgroundColor;
 
 
@@ -74,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
         _pongView.setListener(this);
 
-        _ballRecyclerView.setAdapter(new BallAdapter());
+        _adapter = new BallAdapter();
+        _ballRecyclerView.setAdapter(_adapter);
         _ballRecyclerView.setNestedScrollingEnabled(true);
     }
 
@@ -105,10 +113,20 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     }
 
     @Override
-    public void onLost() {
+    public void onLost(int ballId, int finalScore) {
         _replay.setText(R.string.replay);
         _replay.setVisibility(View.VISIBLE);
         _ivSettings.setVisibility(View.VISIBLE);
+
+        DataManager.saveScore(getBaseContext(), ballId, finalScore);
+        DataManager.saveUnlocked(getBaseContext(), ballId, true);
+
+        int i = 0;
+
+        for (; i < _adapter._designs.size(); i++)
+            if (_adapter._designs.get(i).id == ballId) break;
+
+        _ballRecyclerView.getAdapter().notifyItemChanged(i);
     }
 
     private void updateBackgroundColor(int score) {
@@ -142,12 +160,14 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
     class BallVH extends RecyclerView.ViewHolder {
         TextView tvEmoji;
+        TextView tvScore;
         ImageView ivDesign;
         View clickableArea;
 
         public BallVH(View itemView) {
             super(itemView);
             tvEmoji = itemView.findViewById(R.id.tvEmoji);
+            tvScore = itemView.findViewById(R.id.tvScore);
             ivDesign = itemView.findViewById(R.id.ivDesign);
             clickableArea = itemView;
         }
@@ -171,19 +191,23 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
             final BallDesign currentDesign = _designs.get(position);
 
+            int score = DataManager.getScore(MainActivity.this, currentDesign.id);
+            boolean unlocked = DataManager.getUnlocked(MainActivity.this, currentDesign.id);
+
+            holder.tvScore.setText("" + score);
+            holder.tvScore.setBackgroundResource(DataManager.getBackgroundDrawable(score, getResources()));
+            holder.tvScore.setVisibility(unlocked ? View.VISIBLE : View.GONE);
+
             if (currentDesign.emoji != null) {
                 holder.tvEmoji.setText(currentDesign.emoji);
                 holder.tvEmoji.setVisibility(View.VISIBLE);
                 holder.ivDesign.setVisibility(View.GONE);
             } else {
-                Glide.with(MainActivity.this)
-                        .load(currentDesign.drawable)
-                        .override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96))
-                        .placeholder(R.drawable.baseline_accessibility_24)
-                        .into(holder.ivDesign);
+                Glide.with(MainActivity.this).load(currentDesign.drawable).override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96)).placeholder(R.drawable.baseline_accessibility_24).into(holder.ivDesign);
 
 
-                //holder.ivDesign.setImageResource(currentDesign.drawable);
+                if (unlocked) holder.ivDesign.clearColorFilter();
+                else holder.ivDesign.setColorFilter(Color.argb(255, 0, 0, 0));
                 holder.tvEmoji.setVisibility(View.GONE);
                 holder.ivDesign.setVisibility(View.VISIBLE);
             }

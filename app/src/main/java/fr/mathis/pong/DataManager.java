@@ -15,10 +15,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DataManager {
 
-    public static String KEY_HIGHSCORE = "key_highscore";
+    public static String KEY_UNLOCKED = "key_highscore_unlock";
+    public static String KEY_HIGHSCORE = "key_highscore_max";
     public static String KEY_SELECTEDBALL = "key_selectedball";
 
     public static ArrayList<BallDesign> getAllBallsDesign(Context context) {
@@ -29,7 +31,6 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 1, -1, 1f, "❤\uFE0F", 0)); // Coeur rouge
         designs.add(new BallDesign(context.getResources(), 2, -1, 1f, "\uD83E\uDD68", 0)); // Bretzel
         designs.add(new BallDesign(context.getResources(), 3, -1, 1f, "✉\uFE0F", 0)); // Bretzel
-
 
 
         designs.add(new BallDesign(context.getResources(), 101, R.drawable.ball_crochet_bonbon, 3f, null, 0));
@@ -57,11 +58,24 @@ public class DataManager {
         return designs;
     }
 
+    public static void saveScore(Context context, int ballId, int score) {
+        SaveInt(context, KEY_HIGHSCORE + ballId, score);
+    }
+
+    public static int getScore(Context context, int ballId) {
+        return ReadInt(context, KEY_HIGHSCORE + ballId, 0);
+    }
+
+    public static void saveUnlocked(Context context, int ballId, boolean unlocked) {
+        SaveBool(context, KEY_UNLOCKED + ballId, unlocked);
+    }
+
+    public static boolean getUnlocked(Context context, int ballId) {
+        return ReadBool(context, KEY_UNLOCKED + ballId, false);
+    }
+
     public static BallDesign getCurrentBallDesign(Context context) {
-        return getAllBallsDesign(context).stream()
-                .filter((b) -> b.id == DataManager.ReadInt(context, KEY_SELECTEDBALL, 0))
-                .findFirst()
-                .orElse(getAllBallsDesign(context).get(0));
+        return getAllBallsDesign(context).stream().filter((b) -> b.id == DataManager.ReadInt(context, KEY_SELECTEDBALL, 0)).findFirst().orElse(getAllBallsDesign(context).get(0));
     }
 
     public static int getBackgroundColor(int score, Resources resources) {
@@ -85,6 +99,31 @@ public class DataManager {
             newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_35, null);
         else
             newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_40, null);
+
+        return newBackgroundColor;
+    }
+
+    public static int getBackgroundDrawable(int score, Resources resources) {
+        int newBackgroundColor;
+
+        if (score < 5)
+            newBackgroundColor = R.drawable.bg_round_score;
+        else if (score < 10)
+            newBackgroundColor = R.drawable.bg_round_score_05;
+        else if (score < 15)
+            newBackgroundColor = R.drawable.bg_round_score_10;
+        else if (score < 20)
+            newBackgroundColor = R.drawable.bg_round_score_15;
+        else if (score < 25)
+            newBackgroundColor = R.drawable.bg_round_score_20;
+        else if (score < 30)
+            newBackgroundColor = R.drawable.bg_round_score_25;
+        else if (score < 35)
+            newBackgroundColor = R.drawable.bg_round_score_30;
+        else if (score < 40)
+            newBackgroundColor = R.drawable.bg_round_score_35;
+        else
+            newBackgroundColor = R.drawable.bg_round_score_40;
 
         return newBackgroundColor;
     }
@@ -123,36 +162,5 @@ public class DataManager {
         SharedPreferences.Editor editor = mgr.edit();
         editor.putString(key, value);
         editor.commit();
-    }
-
-    private static Object fromString(String s) {
-        try {
-            byte b[] = Base64.decode(s, 0);
-            ByteArrayInputStream bi = new ByteArrayInputStream(b);
-            ObjectInputStream si = null;
-
-            si = new ObjectInputStream(bi);
-
-
-            return si.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    private static String toString(Serializable o) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            oos = new ObjectOutputStream(baos);
-            oos.writeObject(o);
-            oos.close();
-            return Base64.encodeToString(baos.toByteArray(), 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
