@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -113,45 +114,60 @@ public class PongView extends View {
     private void updatePhysics() {
         float deltaTime = _timer.getDeltaTime();
 
-        for (int i = 0; i < _balls.size(); i++) {
+        // On va découper l'update de 16ms en paquet de 4ms
+        float steps = 0.004f;
 
-            if (_balls.size() < i)
-                continue;
-            Ball ball = _balls.get(i);
+        int packetsCount = (int) (deltaTime / steps);
+        float lastPacketDuration = deltaTime % steps;
 
-            ball.currentRotation += ball.rotationPerSecond * deltaTime;
+        boolean hasLastPacket = false;
+        if (lastPacketDuration > 0f) {
+            packetsCount++;
+            hasLastPacket = true;
+        }
 
-            //Détection de la barre
-            if (intersects(deltaTime, ball, _bar) && ball.lost == false) {
-                ball.dy = -ball.dy;
-                this.onTouchBar();
-            } else {
-                // Sous la barre
-                if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTime > _bar.y - _bar.height / 2f && ball.lost == false) {
-                    // lost
-                    ball.lost = true;
-                    this.onTouchBottom();
+        for (int p = 0; p < packetsCount; p++) {
+            float deltaTimeToTreat = p == packetsCount - 1 && hasLastPacket ? lastPacketDuration : steps;
+
+            for (int i = 0; i < _balls.size(); i++) {
+
+                if (_balls.size() < i) continue;
+                Ball ball = _balls.get(i);
+
+                ball.currentRotation += ball.rotationPerSecond * deltaTimeToTreat;
+
+                //Détection de la barre
+                if (intersects(deltaTimeToTreat, ball, _bar) && ball.lost == false) {
+                    ball.dy = -ball.dy;
+                    this.onTouchBar();
+                } else {
+                    // Sous la barre
+                    if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTimeToTreat > _bar.y - _bar.height / 2f && ball.lost == false) {
+                        // lost
+                        ball.lost = true;
+                        this.onTouchBottom();
+                    }
+
+                    // Bas de l'écran
+                    if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTimeToTreat > _viewHeight) {
+                        ball.dy = -ball.dy;
+                    }
                 }
 
-                // Bas de l'écran
-                if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTime > _viewHeight) {
+                // Détection gauche/droite
+                if (ball.x + ball.radius + ball.dx * ball.speedFactor * deltaTimeToTreat > _viewWidth || ball.x - ball.radius + ball.dx * ball.speedFactor * deltaTime < 0) {
+                    ball.dx = -ball.dx;
+                }
+
+
+                // Haut
+                if (ball.y - ball.radius + ball.dy * ball.speedFactor * deltaTimeToTreat < 0) {
                     ball.dy = -ball.dy;
                 }
+
+                ball.x = ball.x + ball.dx * ball.speedFactor * deltaTimeToTreat;
+                ball.y = ball.y + ball.dy * ball.speedFactor * deltaTimeToTreat;
             }
-
-            // Détection gauche/droite
-            if (ball.x + ball.radius + ball.dx * ball.speedFactor * deltaTime > _viewWidth || ball.x - ball.radius + ball.dx * ball.speedFactor * deltaTime < 0) {
-                ball.dx = -ball.dx;
-            }
-
-
-            // Haut
-            if (ball.y - ball.radius + ball.dy * ball.speedFactor * deltaTime < 0) {
-                ball.dy = -ball.dy;
-            }
-
-            ball.x = ball.x + ball.dx * ball.speedFactor * deltaTime;
-            ball.y = ball.y + ball.dy * ball.speedFactor * deltaTime;
         }
     }
 
@@ -269,7 +285,7 @@ public class PongView extends View {
         updatePhysics();
 
         for (Ball ball : _balls) {
-            canvas.drawCircle(ball.x, ball.y, ball.radius, _ballPaint);
+            //canvas.drawCircle(ball.x, ball.y, ball.radius, _ballPaint);
 
             if (_ballDesign.emoji != null) {
                 float ascent = Math.abs(_emojiPaint.ascent());
@@ -291,9 +307,9 @@ public class PongView extends View {
             _barPaint.setColor(Color.DKGRAY);
             canvas.drawLine(_bar.x - _bar.width / 2f + _bar.height / 2f, _bar.y, _bar.x + _bar.width / 2f - _bar.height / 2f, _bar.y, _barPaint);
 
-            _barPaint.setStrokeWidth(4);
+          /*  _barPaint.setStrokeWidth(4);
             _barPaint.setColor(Color.RED);
-            canvas.drawLine(_bar.x - _bar.width / 2f, _bar.y, _bar.x + _bar.width / 2f, _bar.y, _barPaint);
+            canvas.drawLine(_bar.x - _bar.width / 2f, _bar.y, _bar.x + _bar.width / 2f, _bar.y, _barPaint);*/
         }
 
         if (!_balls.isEmpty()) invalidate();
