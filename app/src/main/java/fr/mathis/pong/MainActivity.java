@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -198,13 +199,15 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             holder.tvScore.setBackgroundResource(DataManager.getBackgroundDrawable(score, getResources()));
             holder.tvScore.setVisibility(unlocked ? View.VISIBLE : View.GONE);
 
+            double luminance = ColorUtils.calculateLuminance(DataManager.getBackgroundColor(score, getResources()));
+            holder.tvScore.setTextColor(luminance > 0.5 ? Color.BLACK : Color.WHITE);
+
             if (currentDesign.emoji != null) {
                 holder.tvEmoji.setText(currentDesign.emoji);
                 holder.tvEmoji.setVisibility(View.VISIBLE);
                 holder.ivDesign.setVisibility(View.GONE);
             } else {
                 Glide.with(MainActivity.this).load(currentDesign.drawable).override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96)).placeholder(R.drawable.baseline_accessibility_24).into(holder.ivDesign);
-
 
                 if (unlocked) holder.ivDesign.clearColorFilter();
                 else holder.ivDesign.setColorFilter(Color.argb(255, 0, 0, 0));
