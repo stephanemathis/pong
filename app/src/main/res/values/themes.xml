@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.Pong" parent="Base.Theme.Pong" />
+
+    <style name="Circular">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

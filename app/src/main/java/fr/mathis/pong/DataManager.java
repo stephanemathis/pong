@@ -84,26 +84,30 @@ public class DataManager {
     }
 
     public static int getBackgroundColor(int score, Resources resources) {
+        return ResourcesCompat.getColor(resources, DataManager.getBackgroundResourceColor(score), null);
+    }
+
+    public static int getBackgroundResourceColor(int score) {
         int newBackgroundColor;
 
         if (score < 5)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background, null);
+            newBackgroundColor = R.color.game_background;
         else if (score < 10)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_05, null);
+            newBackgroundColor = R.color.game_background_05;
         else if (score < 15)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_10, null);
+            newBackgroundColor = R.color.game_background_10;
         else if (score < 20)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_15, null);
+            newBackgroundColor = R.color.game_background_15;
         else if (score < 25)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_20, null);
+            newBackgroundColor = R.color.game_background_20;
         else if (score < 30)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_25, null);
+            newBackgroundColor = R.color.game_background_25;
         else if (score < 35)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_30, null);
+            newBackgroundColor = R.color.game_background_30;
         else if (score < 40)
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_35, null);
+            newBackgroundColor = R.color.game_background_35;
         else
-            newBackgroundColor = ResourcesCompat.getColor(resources, R.color.game_background_40, null);
+            newBackgroundColor = R.color.game_background_40;
 
         return newBackgroundColor;
     }

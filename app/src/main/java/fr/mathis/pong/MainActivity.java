@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
             return insets;
         });
+
 
         _replay.setOnClickListener(v -> {
             this.onReplayClicked();
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     class BallVH extends RecyclerView.ViewHolder {
         TextView tvEmoji;
         TextView tvScore;
-        ImageView ivDesign;
+        ShapeableImageView ivDesign;
         View clickableArea;
 
         public BallVH(View itemView) {
@@ -250,6 +252,13 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
                 else holder.ivDesign.setColorFilter(Color.argb(255, 0, 0, 0));
                 holder.tvEmoji.setVisibility(View.GONE);
                 holder.ivDesign.setVisibility(View.VISIBLE);
+                //holder.ivDesign.setBackgroundResource(R.color.white);
+                //
+                if (unlocked)
+                    holder.ivDesign.setStrokeColorResource(DataManager.getBackgroundResourceColor(score));
+                else
+                    holder.ivDesign.setStrokeColorResource(android.R.color.darker_gray);
+
             }
 
             holder.clickableArea.setOnClickListener(v -> {
