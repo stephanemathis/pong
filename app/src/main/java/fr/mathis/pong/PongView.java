@@ -244,6 +244,9 @@ public class PongView extends View {
             _balls.add(newBall);
         }
 
+        _bar.height = 0;
+        _bar.width = 0;
+
 
         if (_listener != null) _listener.onLost(_ballDesign.id, this._score);
     }

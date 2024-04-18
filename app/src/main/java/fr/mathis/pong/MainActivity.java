@@ -202,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         TextView tvEmoji;
         TextView tvScore;
         ShapeableImageView ivDesign;
+        ShapeableImageView ivVolume;
         View clickableArea;
 
         public BallVH(View itemView) {
@@ -209,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             tvEmoji = itemView.findViewById(R.id.tvEmoji);
             tvScore = itemView.findViewById(R.id.tvScore);
             ivDesign = itemView.findViewById(R.id.ivDesign);
+            ivVolume = itemView.findViewById(R.id.ivVolume);
             clickableArea = itemView;
         }
     }
@@ -237,28 +239,25 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             holder.tvScore.setText("" + score);
             holder.tvScore.setBackgroundResource(DataManager.getBackgroundDrawable(score, getResources()));
             holder.tvScore.setVisibility(unlocked ? View.VISIBLE : View.GONE);
+            holder.ivVolume.setVisibility(currentDesign.song > 0 ? View.VISIBLE : View.GONE);
 
             double luminance = ColorUtils.calculateLuminance(DataManager.getBackgroundColor(score, getResources()));
             holder.tvScore.setTextColor(luminance > 0.5 ? Color.BLACK : Color.WHITE);
 
+            if (unlocked)
+                holder.ivDesign.setStrokeColorResource(DataManager.getBackgroundResourceColor(score));
+            else
+                holder.ivDesign.setStrokeColorResource(R.color.gray);
+
             if (currentDesign.emoji != null) {
                 holder.tvEmoji.setText(currentDesign.emoji);
                 holder.tvEmoji.setVisibility(View.VISIBLE);
-                holder.ivDesign.setVisibility(View.GONE);
             } else {
                 Glide.with(MainActivity.this).load(currentDesign.drawable).override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96)).placeholder(R.drawable.baseline_accessibility_24).into(holder.ivDesign);
 
                 if (unlocked) holder.ivDesign.clearColorFilter();
                 else holder.ivDesign.setColorFilter(Color.argb(255, 0, 0, 0));
                 holder.tvEmoji.setVisibility(View.GONE);
-                holder.ivDesign.setVisibility(View.VISIBLE);
-                //holder.ivDesign.setBackgroundResource(R.color.white);
-                //
-                if (unlocked)
-                    holder.ivDesign.setStrokeColorResource(DataManager.getBackgroundResourceColor(score));
-                else
-                    holder.ivDesign.setStrokeColorResource(android.R.color.darker_gray);
-
             }
 
             holder.clickableArea.setOnClickListener(v -> {

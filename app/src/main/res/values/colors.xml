@@ -14,4 +14,5 @@
     <color name="game_background_40">#8A62F2</color>
 
     <color name="score">#3C000000</color>
+    <color name="gray">#AAAAAA</color>
 </resources>
