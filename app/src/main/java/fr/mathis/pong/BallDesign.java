@@ -16,14 +16,16 @@ public class BallDesign {
     public final float radiusMultiplier;
     public final String emoji;
     public final int minScore;
+    public final int song;
 
-    public BallDesign(Resources resources, int id, int drawable, float radiusMultiplier, String emoji, int minScore) {
+    public BallDesign(Resources resources, int id, int drawable, float radiusMultiplier, String emoji, int minScore, int song) {
 
         this.id = id;
         this.drawable = drawable;
         this.emoji = emoji;
         this.minScore = minScore;
         this.radiusMultiplier = radiusMultiplier;
+        this.song = song;
         if (this.drawable > 0) {
             this.bitmap = BitmapFactory.decodeResource(resources, drawable);
             this.bitmapRect = new Rect(0, 0, this.bitmap.getWidth(), this.bitmap.getHeight());
@@ -31,6 +33,18 @@ public class BallDesign {
             this.bitmap = null;
             this.bitmapRect = null;
         }
+    }
+
+    public BallDesign(Resources resources, int id, int drawable, float radiusMultiplier, int minScore) {
+        this(resources, id, drawable, radiusMultiplier, null, minScore, -1);
+    }
+
+    public BallDesign(Resources resources, int id, int drawable, float radiusMultiplier, int minScore, int song) {
+        this(resources, id, drawable, radiusMultiplier, null, minScore, song);
+    }
+
+    public BallDesign(Resources resources, int id, String emoji, float radiusMultiplier, int minScore) {
+        this(resources, id, -1, radiusMultiplier, emoji, minScore, -1);
     }
 }
 
