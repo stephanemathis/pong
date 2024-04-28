@@ -3,10 +3,10 @@ package fr.mathis.pong;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import androidx.core.content.res.ResourcesCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +32,6 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 2, "\uD83E\uDD68", 1f, 0)); // Bretzel
         designs.add(new BallDesign(context.getResources(), 3, "✉\uFE0F", 1f, 0)); // Bretzel
 
-
         designs.add(new BallDesign(context.getResources(), 101, R.drawable.ball_crochet_bonbon, 3f, 0));
         designs.add(new BallDesign(context.getResources(), 102, R.drawable.ball_crochet_coeur, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 103, R.drawable.ball_crochet_lapin, 1.5f, 0));
@@ -47,11 +46,11 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 107, R.drawable.ball_tete_gautier, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 108, R.drawable.ball_tete_therese, 1.5f, 0));
 
-        designs.add(new BallDesign(context.getResources(), 106, R.drawable.ball_tete_ed, 1.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 106, R.drawable.ball_tete_ed, 1.5f, 0, R.raw.europapark));
         designs.add(new BallDesign(context.getResources(), 114, R.drawable.ball_tft_crue, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 115, R.drawable.ball_tft_cuite, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 116, R.drawable.ball_cigne_serviette, 2.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 120, R.drawable.ball_tasse, 2f, 0));
+        designs.add(new BallDesign(context.getResources(), 120, R.drawable.ball_tasse, 2f, 0, R.raw.fastfurious));
         designs.add(new BallDesign(context.getResources(), 121, R.drawable.ball_dog, 2f, 0, R.raw.sax_guy));
         designs.add(new BallDesign(context.getResources(), 122, R.drawable.ball_cat_left, 2.5f, 0));
         designs.add(new BallDesign(context.getResources(), 123, R.drawable.ball_cat_right, 2.5f, 0));

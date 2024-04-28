@@ -85,7 +85,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="4" />
+            app:spanCount="@integer/gridColumns" />
 
     </com.google.android.material.card.MaterialCardView>
 

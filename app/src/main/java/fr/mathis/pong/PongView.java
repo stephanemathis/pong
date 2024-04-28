@@ -209,7 +209,7 @@ public class PongView extends View {
     }
 
     private void onTouchBar() {
-        this._score += 4;
+        this._score += 1;
         this.informScoreChanged();
 
         this.vibrate();

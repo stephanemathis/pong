@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     int currentBackgroundColor;
     BallDesign currentDesign;
     MediaPlayer mediaPlayer;
+    int currentSong;
 
 
     @Override
@@ -164,24 +165,26 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _cvSettings.setVisibility(View.GONE);
         _pongView.start();
 
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-
-        if (currentDesign.song > 0) {
-            try {
-                mediaPlayer = MediaPlayer.create(this, currentDesign.song);
-
-
-                mediaPlayer.setVolume(1f, 1f);
-                mediaPlayer.setLooping(true);
-                mediaPlayer.start();
-
-
-            } catch (IllegalStateException e) {
+        if (currentSong != currentDesign.song) {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
                 mediaPlayer = null;
+            }
+
+            if (currentDesign.song > 0) {
+                try {
+                    mediaPlayer = MediaPlayer.create(this, currentDesign.song);
+                    currentSong = currentDesign.song;
+
+                    mediaPlayer.setVolume(1f, 1f);
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+
+
+                } catch (IllegalStateException e) {
+                    mediaPlayer = null;
+                }
             }
         }
 
@@ -246,12 +249,12 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
             if (unlocked)
                 holder.ivDesign.setStrokeColorResource(DataManager.getBackgroundResourceColor(score));
-            else
-                holder.ivDesign.setStrokeColorResource(R.color.gray);
+            else holder.ivDesign.setStrokeColorResource(R.color.gray);
 
             if (currentDesign.emoji != null) {
                 holder.tvEmoji.setText(currentDesign.emoji);
                 holder.tvEmoji.setVisibility(View.VISIBLE);
+                holder.ivDesign.setImageDrawable(null);
             } else {
                 Glide.with(MainActivity.this).load(currentDesign.drawable).override(PongView.convertDpToPixel(96), PongView.convertDpToPixel(96)).placeholder(R.drawable.baseline_accessibility_24).into(holder.ivDesign);
 

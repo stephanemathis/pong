@@ -11,15 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivDesign"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="4dp"
-            android:padding="4dp"
             android:background="@color/white"
+            android:padding="4dp"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
@@ -47,30 +45,33 @@
             android:id="@+id/tvScore"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/bg_round"
             android:gravity="center"
             android:textSize="8dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintEnd_toEndOf="@id/ivDesign"
+            app:layout_constraintStart_toStartOf="@id/ivDesign" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivVolume"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:padding="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:src="@drawable/baseline_volume_up_24"
+            android:layout_marginBottom="12dp"
+
             android:background="@color/white"
+            android:padding="4dp"
             android:scaleType="centerInside"
-            app:tint="@color/gray"
+            android:src="@drawable/baseline_volume_up_24"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/ivDesign"
+            app:layout_constraintHorizontal_bias="0.85"
+            app:layout_constraintStart_toStartOf="@id/ivDesign"
             app:shapeAppearanceOverlay="@style/Circular"
             app:strokeColor="@color/gray"
-            app:strokeWidth="1dp" />
+            app:strokeWidth="1dp"
+            app:tint="@color/gray" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </fr.mathis.pong.FrameLayoutSquared>
