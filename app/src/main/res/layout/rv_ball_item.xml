@@ -5,10 +5,14 @@
     android:layout_height="match_parent"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:layout_height="match_parent">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -18,7 +22,7 @@
             android:layout_margin="4dp"
             android:background="@color/white"
             android:padding="4dp"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +30,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/Circular"
             app:strokeColor="#00BCD4"
-            app:strokeWidth="2dp" />
+            android:elevation="@dimen/clickable_elevation"
+            app:strokeWidth="4dp" />
 
         <TextView
             android:id="@+id/tvEmoji"
@@ -34,7 +39,8 @@
             android:layout_height="0dp"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:textSize="36dp"
+            android:textSize="72dp"
+            android:elevation="@dimen/clickable_elevation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,6 +55,7 @@
             android:background="@drawable/bg_round"
             android:gravity="center"
             android:textSize="8dp"
+            android:elevation="@dimen/clickable_elevation"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.15"
@@ -60,7 +67,6 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginBottom="12dp"
-
             android:background="@color/white"
             android:padding="4dp"
             android:scaleType="centerInside"
@@ -72,6 +78,7 @@
             app:shapeAppearanceOverlay="@style/Circular"
             app:strokeColor="@color/gray"
             app:strokeWidth="1dp"
+            android:elevation="@dimen/clickable_elevation"
             app:tint="@color/gray" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </fr.mathis.pong.FrameLayoutSquared>

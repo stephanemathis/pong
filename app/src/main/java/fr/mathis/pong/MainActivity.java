@@ -3,12 +3,8 @@ package fr.mathis.pong;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -28,12 +25,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 public class MainActivity extends AppCompatActivity implements PongView.PongListener {
 
@@ -45,10 +39,11 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     CardView _cvSettings;
     RecyclerView _ballRecyclerView;
     BallAdapter _adapter;
-    int currentBackgroundColor;
-    BallDesign currentDesign;
-    MediaPlayer mediaPlayer;
-    int currentSong;
+    int _currentBackgroundColor;
+    BallDesign _currentDesign;
+    MediaPlayer _mediaPlayer;
+    int _currentSong;
+    OnBackPressedCallback _backCallback;
 
 
     @Override
@@ -78,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             return insets;
         });
 
-
         _replay.setOnClickListener(v -> {
             this.onReplayClicked();
         });
@@ -93,7 +87,18 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _ballRecyclerView.setAdapter(_adapter);
         _ballRecyclerView.setNestedScrollingEnabled(true);
 
-        currentDesign = DataManager.getCurrentBallDesign(this);
+        _currentDesign = DataManager.getCurrentBallDesign(this);
+
+        _backCallback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                _pongView.stop();
+                // Handle the back button event
+            }
+        };
+        this.getOnBackPressedDispatcher().addCallback(this, _backCallback);
+
+        _backCallback.setEnabled(false);
     }
 
     boolean paused = false;
@@ -102,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     protected void onPause() {
         super.onPause();
 
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
+        if (_mediaPlayer != null) {
+            _mediaPlayer.stop();
         }
 
         this.paused = true;
@@ -116,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         if (this.paused) {
             this.paused = false;
             this.onReplayClicked();
-            if (mediaPlayer != null) {
-                mediaPlayer.start();
+            if (_mediaPlayer != null) {
+                _mediaPlayer.start();
             }
         }
     }
@@ -134,28 +139,32 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _replay.setText(R.string.replay);
         _replay.setVisibility(View.VISIBLE);
         _ivSettings.setVisibility(View.VISIBLE);
+        _backCallback.setEnabled(false);
 
         DataManager.saveScore(getBaseContext(), ballId, finalScore);
         DataManager.saveUnlocked(getBaseContext(), ballId, true);
+
 
         int i = 0;
 
         for (; i < _adapter._designs.size(); i++)
             if (_adapter._designs.get(i).id == ballId) break;
 
+
         _ballRecyclerView.getAdapter().notifyItemChanged(i);
+
     }
 
     private void updateBackgroundColor(int score) {
         int newBackgroundColor = DataManager.getBackgroundColor(score, getResources());
 
-        if (currentBackgroundColor != newBackgroundColor) {
-            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), currentBackgroundColor, newBackgroundColor);
+        if (_currentBackgroundColor != newBackgroundColor) {
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), _currentBackgroundColor, newBackgroundColor);
             colorAnimation.setDuration(250); // milliseconds
             colorAnimation.addUpdateListener(animator -> container.setBackgroundColor((int) animator.getAnimatedValue()));
             colorAnimation.start();
 
-            currentBackgroundColor = newBackgroundColor;
+            _currentBackgroundColor = newBackgroundColor;
         }
     }
 
@@ -164,26 +173,27 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _ivSettings.setVisibility(View.GONE);
         _cvSettings.setVisibility(View.GONE);
         _pongView.start();
+        _backCallback.setEnabled(true);
 
-        if (currentSong != currentDesign.song) {
-            if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
+        if (_currentSong != _currentDesign.song) {
+            if (_mediaPlayer != null) {
+                _mediaPlayer.stop();
+                _mediaPlayer.release();
+                _mediaPlayer = null;
             }
 
-            if (currentDesign.song > 0) {
+            if (_currentDesign.song > 0) {
                 try {
-                    mediaPlayer = MediaPlayer.create(this, currentDesign.song);
-                    currentSong = currentDesign.song;
+                    _mediaPlayer = MediaPlayer.create(this, _currentDesign.song);
+                    _currentSong = _currentDesign.song;
 
-                    mediaPlayer.setVolume(1f, 1f);
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
+                    _mediaPlayer.setVolume(1f, 1f);
+                    _mediaPlayer.setLooping(true);
+                    _mediaPlayer.start();
 
 
                 } catch (IllegalStateException e) {
-                    mediaPlayer = null;
+                    _mediaPlayer = null;
                 }
             }
         }
@@ -197,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
     public void onBallSelected(BallDesign design) {
         DataManager.SaveInt(this.getApplicationContext(), DataManager.KEY_SELECTEDBALL, design.id);
-        currentDesign = design;
+        _currentDesign = design;
         this.onReplayClicked();
     }
 

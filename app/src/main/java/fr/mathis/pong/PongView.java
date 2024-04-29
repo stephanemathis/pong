@@ -79,8 +79,9 @@ public class PongView extends View {
         _ballRect = new Rect(0, 0, 0, 0);
 
         _ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        _ballPaint.setStyle(Paint.Style.FILL);
+        _ballPaint.setStyle(Paint.Style.STROKE);
         _ballPaint.setAntiAlias(true);
+        _ballPaint.setStrokeWidth(convertDpToPixel(2));
         _ballPaint.setColor(Color.BLUE);
 
         _barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -356,6 +357,11 @@ public class PongView extends View {
         this.initData();
         this.informScoreChanged();
         invalidate();
+    }
+
+    public void stop() {
+        _balls.stream().forEach(b -> b.lost = true);
+        this.onTouchBottom();
     }
 
     public void setListener(PongListener listener) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="gridColumns">8</integer>
+    <dimen name="clickable_elevation">12dp</dimen>
+    <integer name="gridColumns">6</integer>
 
 </resources>

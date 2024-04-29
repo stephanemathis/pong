@@ -84,6 +84,8 @@
             android:id="@+id/rvBalls"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="@integer/gridColumns" />
 

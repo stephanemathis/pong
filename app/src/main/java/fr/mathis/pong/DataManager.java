@@ -32,28 +32,35 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 2, "\uD83E\uDD68", 1f, 0)); // Bretzel
         designs.add(new BallDesign(context.getResources(), 3, "✉\uFE0F", 1f, 0)); // Bretzel
 
-        designs.add(new BallDesign(context.getResources(), 101, R.drawable.ball_crochet_bonbon, 3f, 0));
+        designs.add(new BallDesign(context.getResources(), 101, R.drawable.ball_crochet_bonbon, 2.5f, 0));
         designs.add(new BallDesign(context.getResources(), 102, R.drawable.ball_crochet_coeur, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 103, R.drawable.ball_crochet_lapin, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 104, R.drawable.ball_crochet_painepice, 1.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 104, R.drawable.ball_crochet_painepice, 1.6f, 0));
 
-        designs.add(new BallDesign(context.getResources(), 105, R.drawable.ball_tate_gaelle_lapin, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 109, R.drawable.ball_tete_gaelle_serviette, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 110, R.drawable.ball_tete_gaelle_couronne, 1.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 105, R.drawable.ball_tate_gaelle_lapin, 2.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 109, R.drawable.ball_tete_gaelle_serviette, 2f, 0));
+        designs.add(new BallDesign(context.getResources(), 110, R.drawable.ball_tete_gaelle_couronne, 1.7f, 0));
         designs.add(new BallDesign(context.getResources(), 111, R.drawable.ball_tete_stephane_deforme, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 112, R.drawable.ball_tete_stephane_jeune, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 113, R.drawable.ball_tete_stephane_serviette, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 107, R.drawable.ball_tete_gautier, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 108, R.drawable.ball_tete_therese, 1.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 113, R.drawable.ball_tete_stephane_serviette, 2f, 0));
+        designs.add(new BallDesign(context.getResources(), 107, R.drawable.ball_tete_gautier, 1.4f, 0));
+        designs.add(new BallDesign(context.getResources(), 108, R.drawable.ball_tete_therese, 1.6f, 0));
 
         designs.add(new BallDesign(context.getResources(), 106, R.drawable.ball_tete_ed, 1.5f, 0, R.raw.europapark));
-        designs.add(new BallDesign(context.getResources(), 114, R.drawable.ball_tft_crue, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 115, R.drawable.ball_tft_cuite, 1.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 116, R.drawable.ball_cigne_serviette, 2.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 120, R.drawable.ball_tasse, 2f, 0, R.raw.fastfurious));
+        designs.add(new BallDesign(context.getResources(), 114, R.drawable.ball_tft_crue, 1.35f, 0));
+        designs.add(new BallDesign(context.getResources(), 115, R.drawable.ball_tft_cuite, 1.35f, 0));
+        designs.add(new BallDesign(context.getResources(), 116, R.drawable.ball_cigne_serviette, 2f, 0));
+        designs.add(new BallDesign(context.getResources(), 120, R.drawable.ball_tasse, 1.8f, 0, R.raw.fastfurious));
         designs.add(new BallDesign(context.getResources(), 121, R.drawable.ball_dog, 2f, 0, R.raw.sax_guy));
         designs.add(new BallDesign(context.getResources(), 122, R.drawable.ball_cat_left, 2.5f, 0));
         designs.add(new BallDesign(context.getResources(), 123, R.drawable.ball_cat_right, 2.5f, 0));
+
+        designs.add(new BallDesign(context.getResources(), 125, R.drawable.ball_trio_dals, 1.8f, 0));
+        designs.add(new BallDesign(context.getResources(), 126, R.drawable.ball_trio_coiffure, 1.2f, 0));
+        designs.add(new BallDesign(context.getResources(), 127, R.drawable.ball_trio_mariage_claire, 1.3f, 0));
+        designs.add(new BallDesign(context.getResources(), 128, R.drawable.ball_trio_ober, 1.2f, 0));
+        designs.add(new BallDesign(context.getResources(), 129, R.drawable.ball_trio_ep, 1.8f, 0));
+        designs.add(new BallDesign(context.getResources(), 130, R.drawable.ball_trio_ober_recent, 1.2f, 0));
 
         designs.add(new BallDesign(context.getResources(), 117, R.drawable.ball_forme_gaellestephane, 5f, 0));
         designs.add(new BallDesign(context.getResources(), 118, R.drawable.ball_forme_gaelle_accrobranche, 5f, 0));
