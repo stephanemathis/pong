@@ -82,7 +82,7 @@ public class PongView extends View {
         _ballPaint.setStyle(Paint.Style.STROKE);
         _ballPaint.setAntiAlias(true);
         _ballPaint.setStrokeWidth(convertDpToPixel(2));
-        _ballPaint.setColor(Color.BLUE);
+        _ballPaint.setColor(Color.WHITE);
 
         _barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         _barPaint.setStyle(Paint.Style.FILL);
@@ -248,6 +248,7 @@ public class PongView extends View {
         _bar.height = 0;
         _bar.width = 0;
 
+        firstBall.showBoundaries = true;
 
         if (_listener != null) _listener.onLost(_ballDesign.id, this._score);
     }
@@ -290,7 +291,6 @@ public class PongView extends View {
         updatePhysics();
 
         for (Ball ball : _balls) {
-            //canvas.drawCircle(ball.x, ball.y, ball.radius, _ballPaint);
 
             if (_ballDesign.emoji != null) {
                 float ascent = Math.abs(_emojiPaint.ascent());
@@ -305,6 +305,9 @@ public class PongView extends View {
                 canvas.drawBitmap(_ballDesign.bitmap, _ballDesign.bitmapRect, this._ballRect, _emojiPaint);
                 canvas.rotate(-ball.currentRotation, ball.x, ball.y);
             }
+
+            if (ball.showBoundaries)
+                canvas.drawCircle(ball.x, ball.y, ball.radius, _ballPaint);
         }
 
         if (_bar != null) {
@@ -398,6 +401,7 @@ public class PongView extends View {
         public float currentRotation;
         public boolean lost;
         public float dpPerSecond;
+        public boolean showBoundaries;
 
         public Ball(float _x, float _y, float _radius, int _direction, float _dpPerSecond, int _generatedIndex) {
             this.x = _x;
@@ -413,6 +417,7 @@ public class PongView extends View {
             this.currentRotation = 0f;
             this.lost = false;
             this.dpPerSecond = _dpPerSecond;
+            this.showBoundaries = false;
         }
 
         public Ball(Ball _source, int _direction) {
@@ -429,6 +434,7 @@ public class PongView extends View {
             this.currentRotation = _source.currentRotation;
             this.lost = _source.lost;
             this.dpPerSecond = _source.dpPerSecond;
+            this.showBoundaries = _source.showBoundaries;
         }
     }
 

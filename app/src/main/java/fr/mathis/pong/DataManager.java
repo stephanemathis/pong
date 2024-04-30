@@ -63,6 +63,7 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 130, R.drawable.ball_trio_ober_recent, 1.2f, 0));
 
         designs.add(new BallDesign(context.getResources(), 117, R.drawable.ball_forme_gaellestephane, 5f, 0));
+        designs.add(new BallDesign(context.getResources(), 131, R.drawable.ball_forme_stephane_ongles, 3f, 0));
         designs.add(new BallDesign(context.getResources(), 118, R.drawable.ball_forme_gaelle_accrobranche, 5f, 0));
         designs.add(new BallDesign(context.getResources(), 119, R.drawable.ball_forme_therese, 3f, 0));
 

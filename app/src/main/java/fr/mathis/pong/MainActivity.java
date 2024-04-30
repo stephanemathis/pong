@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             @Override
             public void handleOnBackPressed() {
                 _pongView.stop();
-                // Handle the back button event
             }
         };
         this.getOnBackPressedDispatcher().addCallback(this, _backCallback);
