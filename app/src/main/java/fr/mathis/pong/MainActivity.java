@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     PongView _pongView;
     TextView _score;
     Button _replay;
+    Switch _swDifficulty;
     ImageView _ivSettings;
     CardView _cvSettings;
     RecyclerView _ballRecyclerView;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _ivSettings = findViewById(R.id.ivSettings);
         _cvSettings = findViewById(R.id.cvSettings);
         _ballRecyclerView = findViewById(R.id.rvBalls);
+        _swDifficulty = findViewById(R.id.swDifficulty);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.insideContent), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -73,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             return insets;
         });
 
+        _swDifficulty.setChecked(DataManager.isEasyMode(this));
+
+        _swDifficulty.setOnCheckedChangeListener((button, value) -> {
+            DataManager.setEasyMode(this, value);
+            _pongView.setDifficulty(value);
+        });
+
         _replay.setOnClickListener(v -> {
             this.onReplayClicked();
         });
@@ -82,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         });
 
         _pongView.setListener(this);
+        _pongView.setDifficulty(DataManager.isEasyMode(this));
 
         _adapter = new BallAdapter();
         _ballRecyclerView.setAdapter(_adapter);

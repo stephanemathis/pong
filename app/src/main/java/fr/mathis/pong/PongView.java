@@ -40,6 +40,7 @@ public class PongView extends View {
     PongListener _listener;
 
     int _score;
+    boolean _easyMode;
 
     BallDesign _ballDesign;
     Rect _ballRect;
@@ -77,6 +78,7 @@ public class PongView extends View {
         _score = 0;
         _ballDesign = DataManager.getCurrentBallDesign(context);
         _ballRect = new Rect(0, 0, 0, 0);
+        _easyMode = false;
 
         _ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         _ballPaint.setStyle(Paint.Style.STROKE);
@@ -102,7 +104,7 @@ public class PongView extends View {
         _score = 0;
         _ballDesign = DataManager.getCurrentBallDesign(this.getContext());
 
-        _bar = new Bar(_viewWidth / 2f, _viewHeight - convertDpToPixel(24), _viewWidth / 4f, convertDpToPixel(36));
+        _bar = new Bar(_viewWidth / 2f, _viewHeight - convertDpToPixel(24), _viewWidth / (_easyMode ? 2f : 4f), convertDpToPixel(36));
 
         int angle = 180 + 45 + 15 - 15 + (int) (_random.nextFloat() * 15);
 
@@ -369,6 +371,10 @@ public class PongView extends View {
 
     public void setListener(PongListener listener) {
         this._listener = listener;
+    }
+
+    public void setDifficulty(boolean easyMode) {
+        _easyMode = easyMode;
     }
 
     private void informScoreChanged() {

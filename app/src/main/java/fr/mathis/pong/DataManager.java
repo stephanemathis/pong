@@ -22,6 +22,7 @@ public class DataManager {
     public static String KEY_UNLOCKED = "key_highscore_unlock";
     public static String KEY_HIGHSCORE = "key_highscore_max";
     public static String KEY_SELECTEDBALL = "key_selectedball";
+    public static String KEY_EASY_MODE = "key_easymode";
 
     public static ArrayList<BallDesign> getAllBallsDesign(Context context) {
 
@@ -92,6 +93,14 @@ public class DataManager {
 
     public static int getBackgroundColor(int score, Resources resources) {
         return ResourcesCompat.getColor(resources, DataManager.getBackgroundResourceColor(score), null);
+    }
+
+    public static boolean isEasyMode(Context context) {
+        return DataManager.ReadBool(context, DataManager.KEY_EASY_MODE,  false);
+    }
+
+    public static void setEasyMode(Context context, boolean isEasy) {
+        DataManager.SaveBool(context, DataManager.KEY_EASY_MODE, isEasy);
     }
 
     public static int getBackgroundResourceColor(int score) {
