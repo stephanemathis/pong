@@ -149,6 +149,7 @@ public class PongView extends View {
                     if (ball.y + ball.radius + ball.dy * ball.speedFactor * deltaTimeToTreat > _bar.y - _bar.height / 2f && ball.lost == false) {
                         // lost
                         ball.lost = true;
+                        this.vibrate(200);
                         this.onTouchBottom();
                     }
 
@@ -215,20 +216,20 @@ public class PongView extends View {
         this._score += 1;
         this.informScoreChanged();
 
-        this.vibrate();
+        this.vibrate(50);
 
         for (Ball point : _balls) {
             point.speedFactor = this.properSpeed(point);
         }
     }
 
-    private void vibrate() {
+    private void vibrate(int duration) {
         Vibrator v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            v.vibrate(50);
+            v.vibrate(duration);
         }
     }
 

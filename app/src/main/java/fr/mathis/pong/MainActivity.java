@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     MediaPlayer _mediaPlayer;
     int _currentSong;
     OnBackPressedCallback _backCallback;
+    StateView _svLogo;
+    boolean _uiLocked;
 
 
     @Override
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _cvSettings = findViewById(R.id.cvSettings);
         _ballRecyclerView = findViewById(R.id.rvBalls);
         _swDifficulty = findViewById(R.id.swDifficulty);
+        _svLogo = findViewById(R.id.svLogo);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.insideContent), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -109,6 +113,30 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         this.getOnBackPressedDispatcher().addCallback(this, _backCallback);
 
         _backCallback.setEnabled(false);
+
+        _svLogo.setSvgResource(R.raw.logo3coeur);
+        _svLogo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ((StateView) v).reset();
+                ((StateView) v).reveal(v.getRootView(), 0);
+            }
+        });
+
+        _ivSettings.setVisibility(View.INVISIBLE);
+        _replay.setVisibility(View.INVISIBLE);
+        _svLogo.reveal(container, 0);
+        _uiLocked = true;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                _ivSettings.setVisibility(View.VISIBLE);
+                _replay.setVisibility(View.VISIBLE);
+                _uiLocked = false;
+            }
+        }, 3000);   //5 seconds
     }
 
     boolean paused = false;
@@ -179,9 +207,14 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     }
 
     private void onReplayClicked() {
+
+        if(this._uiLocked)
+            return;
+
         _replay.setVisibility(View.GONE);
         _ivSettings.setVisibility(View.GONE);
         _cvSettings.setVisibility(View.GONE);
+        _svLogo.setVisibility(View.GONE);
         _pongView.start();
         _backCallback.setEnabled(true);
 
@@ -211,6 +244,9 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     }
 
     private void onSettingClicked() {
+        if(this._uiLocked)
+            return;
+
         _cvSettings.setVisibility(_cvSettings.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
