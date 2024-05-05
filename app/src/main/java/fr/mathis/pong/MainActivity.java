@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -179,9 +182,12 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
         _ivSettings.setVisibility(View.VISIBLE);
         _backCallback.setEnabled(false);
 
-        DataManager.saveScore(getBaseContext(), ballId, finalScore);
+        int currentMaxScore = DataManager.getScore(getBaseContext(), ballId);
+        if (currentMaxScore < finalScore) {
+            DataManager.saveScore(getBaseContext(), ballId, finalScore);
+            DataManager.saveScoreMode(getBaseContext(), ballId, _pongView._easyMode);
+        }
         DataManager.saveUnlocked(getBaseContext(), ballId, true);
-
 
         int i = 0;
 
@@ -208,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
 
     private void onReplayClicked() {
 
-        if(this._uiLocked)
+        if (this._uiLocked)
             return;
 
         _replay.setVisibility(View.GONE);
@@ -244,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
     }
 
     private void onSettingClicked() {
-        if(this._uiLocked)
+        if (this._uiLocked)
             return;
 
         _cvSettings.setVisibility(_cvSettings.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -293,9 +299,14 @@ public class MainActivity extends AppCompatActivity implements PongView.PongList
             final BallDesign currentDesign = _designs.get(position);
 
             int score = DataManager.getScore(MainActivity.this, currentDesign.id);
+            boolean scoreInEasyMode = DataManager.getScoreMode(MainActivity.this, currentDesign.id);
             boolean unlocked = DataManager.getUnlocked(MainActivity.this, currentDesign.id);
 
-            holder.tvScore.setText("" + score);
+            SpannableString content = new SpannableString("" + score);
+            if (scoreInEasyMode)
+                content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.tvScore.setText(content);
+
             holder.tvScore.setBackgroundResource(DataManager.getBackgroundDrawable(score, getResources()));
             holder.tvScore.setVisibility(unlocked ? View.VISIBLE : View.GONE);
             holder.ivVolume.setVisibility(currentDesign.song > 0 ? View.VISIBLE : View.GONE);

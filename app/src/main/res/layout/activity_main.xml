@@ -69,9 +69,9 @@
         android:clickable="true"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:padding="48dp"
         app:duration="3000"
         app:fadeFactor="10.0"
-        android:padding="48dp"
         app:layout_constraintBottom_toTopOf="@+id/btnReplay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,6 +119,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
                     android:background="@color/gray"></View>
 
                 <TextView
@@ -131,7 +132,7 @@
 
                 <Switch
                     android:id="@+id/swDifficulty"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginBottom="16dp"

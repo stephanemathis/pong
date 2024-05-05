@@ -21,6 +21,7 @@ public class DataManager {
 
     public static String KEY_UNLOCKED = "key_highscore_unlock";
     public static String KEY_HIGHSCORE = "key_highscore_max";
+    public static String KEY_HIGHSCORE_MODE = "key_highscore_max_mode";
     public static String KEY_SELECTEDBALL = "key_selectedball";
     public static String KEY_EASY_MODE = "key_easymode";
 
@@ -53,8 +54,8 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 116, R.drawable.ball_cigne_serviette, 2f, 0));
         designs.add(new BallDesign(context.getResources(), 120, R.drawable.ball_tasse, 1.8f, 0, R.raw.fastfurious));
         designs.add(new BallDesign(context.getResources(), 121, R.drawable.ball_dog, 2f, 0, R.raw.sax_guy));
-        designs.add(new BallDesign(context.getResources(), 122, R.drawable.ball_cat_left, 2.5f, 0));
-        designs.add(new BallDesign(context.getResources(), 123, R.drawable.ball_cat_right, 2.5f, 0));
+        designs.add(new BallDesign(context.getResources(), 122, R.drawable.ball_cat_left, 2.5f, 0, R.raw.chats));
+        designs.add(new BallDesign(context.getResources(), 123, R.drawable.ball_cat_right, 2.5f, 0, R.raw.chats));
 
         designs.add(new BallDesign(context.getResources(), 125, R.drawable.ball_trio_dals, 1.8f, 0));
         designs.add(new BallDesign(context.getResources(), 126, R.drawable.ball_trio_coiffure, 1.2f, 0));
@@ -68,6 +69,8 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 118, R.drawable.ball_forme_gaelle_accrobranche, 5f, 0));
         designs.add(new BallDesign(context.getResources(), 119, R.drawable.ball_forme_therese, 3f, 0));
 
+        designs.add(new BallDesign(context.getResources(), 132, R.drawable.ball_trio_resto, 1.2f, 0));
+
         return designs;
     }
 
@@ -77,6 +80,14 @@ public class DataManager {
 
     public static int getScore(Context context, int ballId) {
         return ReadInt(context, KEY_HIGHSCORE + ballId, 0);
+    }
+
+    public static void saveScoreMode(Context context, int ballId, boolean easyMode) {
+        SaveBool(context, KEY_HIGHSCORE_MODE + ballId, easyMode);
+    }
+
+    public static boolean getScoreMode(Context context, int ballId) {
+        return ReadBool(context, KEY_HIGHSCORE_MODE + ballId, false);
     }
 
     public static void saveUnlocked(Context context, int ballId, boolean unlocked) {
@@ -96,7 +107,7 @@ public class DataManager {
     }
 
     public static boolean isEasyMode(Context context) {
-        return DataManager.ReadBool(context, DataManager.KEY_EASY_MODE,  false);
+        return DataManager.ReadBool(context, DataManager.KEY_EASY_MODE, false);
     }
 
     public static void setEasyMode(Context context, boolean isEasy) {

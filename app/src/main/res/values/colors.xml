@@ -17,4 +17,6 @@
 
     <color name="score">#3C000000</color>
     <color name="gray">#AAAAAA</color>
+    <color name="ball_selection_background">#EAEAEA</color>
+    <color name="easy_mode_score">#555555</color>
 </resources>
