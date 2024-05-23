@@ -38,6 +38,8 @@ public class DataManager {
         designs.add(new BallDesign(context.getResources(), 102, R.drawable.ball_crochet_coeur, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 103, R.drawable.ball_crochet_lapin, 1.5f, 0));
         designs.add(new BallDesign(context.getResources(), 104, R.drawable.ball_crochet_painepice, 1.6f, 0));
+        designs.add(new BallDesign(context.getResources(), 134, R.drawable.ball_crochet_painepicegaelle_cadeau, 1.6f, 0));
+        designs.add(new BallDesign(context.getResources(), 133, R.drawable.ball_crochet_painepicegaelle, 1.6f, 0));
 
         designs.add(new BallDesign(context.getResources(), 105, R.drawable.ball_tate_gaelle_lapin, 2.5f, 0));
         designs.add(new BallDesign(context.getResources(), 109, R.drawable.ball_tete_gaelle_serviette, 2f, 0));
