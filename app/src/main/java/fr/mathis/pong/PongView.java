@@ -235,7 +235,7 @@ public class PongView extends View {
 
     private void onTouchBottom() {
         for (Ball point : _balls) {
-            point.speedFactor = 1f;//this.properSpeed(point);
+            point.speedFactor = 0.33f;
         }
 
         Ball firstBall = _balls.get(0);
@@ -244,7 +244,9 @@ public class PongView extends View {
             int angle = 180 + 20 + (int) (_random.nextFloat() * 160);
 
             Ball newBall = new Ball(firstBall, angle);
-            newBall.rotationPerSecond = 0;
+            newBall.rotationPerSecond = (int)(newBall.rotationPerSecond * 0.33f);
+            newBall.currentRotation = _random.nextFloat() * 360;
+            newBall.radius *=  1 + (_random.nextFloat() * 2f);
             _balls.add(newBall);
         }
 
